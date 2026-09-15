@@ -151,33 +151,12 @@
                 ],
                 "combinator": "and"
               }
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "id": "7ff4074d-2eee-441f-a514-21746e3b3540",
-                    "leftValue": "everything else",
-                    "rightValue": "general/doc",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              }
             }
           ]
         },
-        "options": {}
+        "options": {
+          "fallbackOutput": "extra"
+        }
       },
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
@@ -300,7 +279,7 @@
     "errorWorkflow": "2rC6pzFBhjPGmujV",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "46bac84e-e391-4c79-b8e3-bf2f31e8fc34",
+  "versionId": "71cb412d-0f88-4219-ba99-17bcc576c21d",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "57491cfdbe85e95c1b68381fa91cb9191d9039f2cf4f647008cb83e4bebc3964"

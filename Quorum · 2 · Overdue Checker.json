@@ -6,8 +6,7 @@
         "rule": {
           "interval": [
             {
-              "field": "minutes",
-              "minutesInterval": 1
+              "triggerAtHour": 9
             }
           ]
         }
@@ -168,7 +167,7 @@
     "errorWorkflow": "2rC6pzFBhjPGmujV",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "07034c3e-8277-4192-a75b-8dc8c002897f",
+  "versionId": "2097167d-9854-4165-8f98-c742c472a81d",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "57491cfdbe85e95c1b68381fa91cb9191d9039f2cf4f647008cb83e4bebc3964"
