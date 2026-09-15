@@ -1,0 +1,179 @@
+{
+  "name": "Quorum · 2 · Overdue Checker",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7e6f42dd-6ef3-4930-8bd3-c008efffa30e",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "96adf693-b77e-404e-a1d3-43c5edf79cb0",
+              "name": "owner",
+              "value": "Priya",
+              "type": "string"
+            },
+            {
+              "id": "a15ff9a8-6304-4143-8b6f-2f354e35aba0",
+              "name": "task",
+              "value": "finalise the vendor contract",
+              "type": "string"
+            },
+            {
+              "id": "7f2cb632-9d0f-436a-8f7e-35631eedfb9d",
+              "name": "due",
+              "value": "2026-08-01",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "203d8c11-7116-4e5e-a368-2d7e4e181a1b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "81818e05-463f-40be-855f-277a53b7a17c",
+              "leftValue": "={{ new Date($json.due) }}",
+              "rightValue": "={{ $now }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "before"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        0
+      ],
+      "id": "16abcf91-9e5f-4b56-b927-3e7ec3d5c9c9",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "models/gemini-3-flash-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Write a 2-line reminder to {{ $json.owner }}: their task \"{{ $json.task }}\" was due {{ $json.due }} and is now overdue. Be polite, direct, and brief. No filler."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        576,
+        -96
+      ],
+      "id": "b401d826-b222-404c-8d13-0c3b36c071e8",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "5Dbl5HTNJGNKUUjD",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "2rC6pzFBhjPGmujV",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "07034c3e-8277-4192-a75b-8dc8c002897f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "57491cfdbe85e95c1b68381fa91cb9191d9039f2cf4f647008cb83e4bebc3964"
+  },
+  "nodeGroups": [],
+  "id": "XBLw3fSSmOQP7bUy",
+  "tags": []
+}

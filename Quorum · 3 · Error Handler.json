@@ -1,0 +1,66 @@
+{
+  "name": "Quorum · 3 · Error Handler",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "fc2bed55-4c05-47eb-bb47-381b140f27ce",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "713deb7d-b54c-43c9-bd0e-a5ef664346f0",
+              "name": "=alert",
+              "value": "=⚠️ Workflow failed: {{ $json.workflow.name }} — check execution: {{ $json.execution.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "aa61e4f4-008d-43bf-9e43-f122b9a558b9",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "a36457d2-3613-4c4c-a303-78a8a2713bed",
+  "meta": {
+    "instanceId": "57491cfdbe85e95c1b68381fa91cb9191d9039f2cf4f647008cb83e4bebc3964"
+  },
+  "nodeGroups": [],
+  "id": "2rC6pzFBhjPGmujV",
+  "tags": []
+}

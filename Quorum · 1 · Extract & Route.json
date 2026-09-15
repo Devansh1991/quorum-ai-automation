@@ -1,0 +1,311 @@
+{
+  "name": "Quorum · 1 · Extract & Route",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "00649e68-b518-488b-9406-704ac7ccaf31",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "10b7b100-2ef7-4929-9f4e-4d086e50ea30",
+              "name": "transcript",
+              "value": "Team sync 18 Aug. Priya will finalise the vendor contract by 22 Aug. We decided to delay the mobile launch to Q4. Rahul to prepare the revised timeline slides by 20 Aug. Anjali will confirm the budget in Power BI by 25 Aug. Dev team to fix the login bug this week, owner unclear.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "6e2c37ad-ebce-4f85-bb41-a91a32f29c3a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "models/gemini-3-flash-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Here are meeting notes. Extract the action items from THESE SPECIFIC notes only.\nDo not invent tasks. Only extract what is actually written below.\n\nMEETING NOTES:\n{{ $json.transcript }}\n\nNow return ONLY a JSON array. Each object has exactly these keys:\n{ \"owner\": \"<name from the notes, or UNASSIGNED>\", \"task\": \"<the actual task from the notes>\", \"due\": \"<date from the notes, or none>\", \"task_type\": \"<slides | bi | doc | dev | general>\" }\n\nRules:\n- Extract ONLY tasks that appear in the notes above. Never invent tasks.\n- Use the real person's name from the notes. Only use UNASSIGNED if no name is given for that task.\n- If no due date is written, use \"none\".\n- Ignore decisions that are not tasks (e.g. \"delay the launch\").\n- Output ONLY the JSON array. No commentary, no markdown fences.\n\n"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "f6d5fd54-5eae-464d-9dda-bc46b796774d",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "5Dbl5HTNJGNKUUjD",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $input.first().json.content.parts[0].text;\nreturn JSON.parse(text);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        816,
+        0
+      ],
+      "id": "0b1c3e98-02c0-4426-bc42-fcb921decb02",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.task_type }}",
+                    "rightValue": "slides",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "a798b97c-7bfb-4964-9d59-b64602111375"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "89952d03-f7cf-40c3-b0da-df7cba32efb3",
+                    "leftValue": "={{ $json.task_type }}",
+                    "rightValue": "bi",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "66b00fd0-ffdc-475d-bc94-ae27b51bcb81",
+                    "leftValue": "={{ $json.task_type }}",
+                    "rightValue": "dev",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7ff4074d-2eee-441f-a514-21746e3b3540",
+                    "leftValue": "everything else",
+                    "rightValue": "general/doc",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "e9061e57-4ff2-4576-b23b-f3a7316bdc13",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "825a84ce-8e1d-40c9-86e2-c1520cd52e95",
+              "name": "tracked_record",
+              "value": "=✓ TRACKED | Owner: {{ $json.owner }} | Task: {{ $json.task }} | Due: {{ $json.due }} | Type: {{ $json.task_type }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1264,
+        -208
+      ],
+      "id": "cc17d4df-94b6-4fcb-97ec-c59abd7cfdc7",
+      "name": "Edit Fields1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "2rC6pzFBhjPGmujV",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "46bac84e-e391-4c79-b8e3-bf2f31e8fc34",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "57491cfdbe85e95c1b68381fa91cb9191d9039f2cf4f647008cb83e4bebc3964"
+  },
+  "nodeGroups": [],
+  "id": "AeWBciEtqvcqVkzf",
+  "tags": []
+}
